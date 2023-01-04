@@ -1211,7 +1211,9 @@ Vector2 MeasureTextEx(Font font, const char *text, float fontSize, float spacing
 
     if (tempTextWidth < textWidth) tempTextWidth = textWidth;
 
-    textSize.x = tempTextWidth*scaleFactor + (float)((tempByteCounter - 1)*spacing); // Adds chars spacing to measure
+    // NOTE: (bscal) changed tempByteCounter - 1 -> tempByteCounter. Not sure why -1, was causing
+    // issues with cursor position with nuklear nk_string_edit
+    textSize.x = tempTextWidth*scaleFactor + (float)((tempByteCounter)*spacing); // Adds chars spacing to measure
     textSize.y = textHeight*scaleFactor;
 
     return textSize;
