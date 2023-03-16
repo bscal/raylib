@@ -477,3 +477,19 @@ static int android_close(void *cookie)
     return 0;
 }
 #endif  // PLATFORM_ANDROID
+
+// Hooks for Raylib.h RL allocations
+static RLMalloc RLMallocHook;
+static RLCalloc RLCallocHook;
+static RLRealloc RLReallocHook;
+static RLFree RLFreeHook;
+
+void SetRLMalloc(RLMalloc hook) { RLMallocHook = hook; }
+void SetRLCalloc(RLCalloc hook) { RLCallocHook = hook; }
+void SetRLRealloc(RLRealloc hook) { RLReallocHook = hook; }
+void SetRLFree(RLFree hook) { RLFreeHook = hook; }
+
+RLMalloc GetRLMalloc() { return RLMallocHook; }
+RLCalloc GetRLCalloc() { return RLCallocHook; }
+RLRealloc GetRLRealloc() { return RLReallocHook; }
+RLFree GetRLFree() { return RLFreeHook; }
