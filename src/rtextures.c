@@ -296,7 +296,7 @@ Image LoadImageRaw(const char *fileName, int width, int height, int format, int 
 Image LoadImageAnim(const char *fileName, int *frames)
 {
     Image image = { 0 };
-    int frameCount = 1;
+    int frameCount = 0;
 
 #if defined(SUPPORT_FILEFORMAT_GIF)
     if (IsFileExtension(fileName, ".gif"))
@@ -320,7 +320,11 @@ Image LoadImageAnim(const char *fileName, int *frames)
 #else
     if (false) { }
 #endif
-    else image = LoadImage(fileName);
+    else
+    {
+        image = LoadImage(fileName);
+        frameCount = 1;
+    }
 
     // TODO: Support APNG animated images
 
@@ -503,7 +507,7 @@ Image LoadImageFromScreen(void)
 bool IsImageReady(Image image)
 {
     return ((image.data != NULL) &&     // Validate pixel data available
-            (image.width > 0) && 
+            (image.width > 0) &&
             (image.height > 0) &&       // Validate image size
             (image.format > 0) &&       // Validate image format
             (image.mipmaps > 0));       // Validate image mipmaps (at least 1 for basic mipmap level)
@@ -3336,10 +3340,10 @@ RenderTexture2D LoadRenderTexture(int width, int height)
 bool IsTextureReady(Texture2D texture)
 {
     // TODO: Validate maximum texture size supported by GPU?
-    
+
     return ((texture.id > 0) &&         // Validate OpenGL id
-            (texture.width > 0) && 
-            (texture.height > 0) &&     // Validate texture size 
+            (texture.width > 0) &&
+            (texture.height > 0) &&     // Validate texture size
             (texture.format > 0) &&     // Validate texture pixel format
             (texture.mipmaps > 0));     // Validate texture mipmaps (at least 1 for basic mipmap level)
 }
@@ -3358,7 +3362,9 @@ void UnloadTexture(Texture2D texture)
 // Check if a render texture is ready
 bool IsRenderTextureReady(RenderTexture2D target)
 {
-    return target.id > 0 && IsTextureReady(target.depth) && IsTextureReady(target.texture);
+    return ((target.id > 0) &&                  // Validate OpenGL id
+            IsTextureReady(target.depth) &&     // Validate FBO depth texture/renderbuffer
+            IsTextureReady(target.texture));    // Validate FBO texture
 }
 
 // Unload render texture from GPU memory (VRAM)
