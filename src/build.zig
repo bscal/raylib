@@ -1,6 +1,7 @@
 const std = @import("std");
 
-pub fn addRaylib(b: *std.Build, target: std.zig.CrossTarget, optimize: std.builtin.OptimizeMode) *std.Build.CompileStep {
+// This has been tested to work with zig master branch as of commit 87de821 or May 14 2023
+pub fn addRaylib(b: *std.Build, target: std.zig.CrossTarget, optimize: std.builtin.OptimizeMode, options: Options) *std.Build.CompileStep {
     const raylib_flags = &[_][]const u8{
         "-std=gnu99",
         "-D_GNU_SOURCE",
@@ -15,7 +16,10 @@ pub fn addRaylib(b: *std.Build, target: std.zig.CrossTarget, optimize: std.built
     });
     raylib.linkLibC();
 
-    raylib.addIncludePath(srcdir ++ "/external/glfw/include");
+    // No GLFW required on PLATFORM_DRM
+    if (!options.platform_drm) {
+        raylib.addIncludePath(.{ .path = srcdir ++ "/external/glfw/include" });
+    }
 
     raylib.addCSourceFiles(&.{
         srcdir ++ "/raudio.c",
@@ -27,25 +31,54 @@ pub fn addRaylib(b: *std.Build, target: std.zig.CrossTarget, optimize: std.built
         srcdir ++ "/utils.c",
     }, raylib_flags);
 
+    var gen_step = std.build.Step.WriteFile.create(b);
+    raylib.step.dependOn(&gen_step.step);
+
+    if (options.raygui) {
+        _ = gen_step.add(srcdir ++ "/raygui.c", "#define RAYGUI_IMPLEMENTATION\n#include \"raygui.h\"\n");
+        raylib.addCSourceFile(.{ .file = .{ .path = srcdir ++ "/raygui.c" }, .flags = raylib_flags });
+        raylib.addIncludePath(.{ .path = srcdir });
+        raylib.addIncludePath(.{ .path = srcdir ++ "/../../raygui/src" });
+    }
+
     switch (target.getOsTag()) {
         .windows => {
             raylib.addCSourceFiles(&.{srcdir ++ "/rglfw.c"}, raylib_flags);
             raylib.linkSystemLibrary("winmm");
             raylib.linkSystemLibrary("gdi32");
             raylib.linkSystemLibrary("opengl32");
-            raylib.addIncludePath("external/glfw/deps/mingw");
+            raylib.addIncludePath(.{ .path = "external/glfw/deps/mingw" });
 
             raylib.defineCMacro("PLATFORM_DESKTOP", null);
         },
         .linux => {
-            raylib.addCSourceFiles(&.{srcdir ++ "/rglfw.c"}, raylib_flags);
-            raylib.linkSystemLibrary("GL");
-            raylib.linkSystemLibrary("rt");
-            raylib.linkSystemLibrary("dl");
-            raylib.linkSystemLibrary("m");
-            raylib.linkSystemLibrary("X11");
+            if (!options.platform_drm) {
+                raylib.addCSourceFiles(&.{srcdir ++ "/rglfw.c"}, raylib_flags);
+                raylib.linkSystemLibrary("GL");
+                raylib.linkSystemLibrary("rt");
+                raylib.linkSystemLibrary("dl");
+                raylib.linkSystemLibrary("m");
+                raylib.linkSystemLibrary("X11");
+                raylib.addLibraryPath(.{ .path = "/usr/lib" });
+                raylib.addIncludePath(.{ .path = "/usr/include" });
 
-            raylib.defineCMacro("PLATFORM_DESKTOP", null);
+                raylib.defineCMacro("PLATFORM_DESKTOP", null);
+            } else {
+                raylib.linkSystemLibrary("GLESv2");
+                raylib.linkSystemLibrary("EGL");
+                raylib.linkSystemLibrary("drm");
+                raylib.linkSystemLibrary("gbm");
+                raylib.linkSystemLibrary("pthread");
+                raylib.linkSystemLibrary("rt");
+                raylib.linkSystemLibrary("m");
+                raylib.linkSystemLibrary("dl");
+                raylib.addIncludePath(.{ .path = "/usr/include/libdrm" });
+
+                raylib.defineCMacro("PLATFORM_DRM", null);
+                raylib.defineCMacro("GRAPHICS_API_OPENGL_ES2", null);
+                raylib.defineCMacro("EGL_NO_X11", null);
+                raylib.defineCMacro("DEFAULT_BATCH_BUFFER_ELEMENT", "2048");
+            }
         },
         .freebsd, .openbsd, .netbsd, .dragonfly => {
             raylib.addCSourceFiles(&.{srcdir ++ "/rglfw.c"}, raylib_flags);
@@ -90,10 +123,10 @@ pub fn addRaylib(b: *std.Build, target: std.zig.CrossTarget, optimize: std.built
             const cache_include = std.fs.path.join(b.allocator, &.{ b.sysroot.?, "cache", "sysroot", "include" }) catch @panic("Out of memory");
             defer b.allocator.free(cache_include);
 
-            var dir = std.fs.openDirAbsolute(cache_include, std.fs.Dir.OpenDirOptions{.access_sub_paths = true, .no_follow = true}) catch @panic("No emscripten cache. Generate it!");
+            var dir = std.fs.openDirAbsolute(cache_include, std.fs.Dir.OpenDirOptions{ .access_sub_paths = true, .no_follow = true }) catch @panic("No emscripten cache. Generate it!");
             dir.close();
 
-            raylib.addIncludePath(cache_include);
+            raylib.addIncludePath(.{ .path = cache_include });
         },
         else => {
             @panic("Unsupported OS");
@@ -102,6 +135,11 @@ pub fn addRaylib(b: *std.Build, target: std.zig.CrossTarget, optimize: std.built
 
     return raylib;
 }
+
+pub const Options = struct {
+    raygui: bool = false,
+    platform_drm: bool = false,
+};
 
 pub fn build(b: *std.Build) void {
     // Standard target options allows the person running `zig build` to choose
@@ -114,12 +152,26 @@ pub fn build(b: *std.Build) void {
     // set a preferred release mode, allowing the user to decide how to optimize.
     const optimize = b.standardOptimizeOption(.{});
 
-    const lib = addRaylib(b, target, optimize);
-    lib.setOutputDir(srcdir);
-    lib.install();
+    const raygui = b.option(bool, "raygui", "Compile with raygui support");
+    const platform_drm = b.option(bool, "platform_drm", "Compile raylib in native mode (no X11)");
+
+    const lib = addRaylib(b, target, optimize, .{
+        .raygui = raygui orelse false,
+        .platform_drm = platform_drm orelse false,
+    });
+
+    lib.installHeader("src/raylib.h", "raylib.h");
+    lib.installHeader("src/raymath.h", "raymath.h");
+    lib.installHeader("src/rlgl.h", "rlgl.h");
+
+    if (raygui orelse false) {
+        lib.installHeader("../raygui/src/raygui.h", "raygui.h");
+    }
+
+    b.installArtifact(lib);
 }
 
-const srcdir = struct{
+const srcdir = struct {
     fn getSrcDir() []const u8 {
         return std.fs.path.dirname(@src().file).?;
     }
