@@ -116,42 +116,38 @@
     #define RAD2DEG (180.0f/PI)
 #endif
 
-// NOTE: bscal, Hooks for RL Allocations - implemented in utils.c
-// these are not my ideal ways of adding hooks, but I could not
-// see a better way of setting custom allocators
-typedef void* (*RLMalloc)(unsigned long long sz);
-typedef void* (*RLCalloc)(unsigned long long num, unsigned long long sz);
-typedef void* (*RLRealloc)(void* ptr, unsigned long long sz);
-typedef void (*RLFree)(void* block);
-
 #if defined(__cplusplus)
-extern "C" {
+extern "C" {            // Prevents name mangling of functions
 #endif
-RLAPI void SetRLMalloc(RLMalloc hook);
-RLAPI void SetRLCalloc(RLCalloc hook);
-RLAPI void SetRLRealloc(RLRealloc hook);
-RLAPI void SetRLFree(RLFree hook);
-RLAPI RLMalloc GetRLMalloc();
-RLAPI RLCalloc GetRLCalloc();
-RLAPI RLRealloc GetRLRealloc();
-RLAPI RLFree GetRLFree();
+    typedef void* (*RlMallocCallback)(size_t sz);
+    typedef void* (*RlReallocCallback)(void* ptr, size_t sz);
+    typedef void  (*RlFreeCallback)(void* ptr);
+
+    RLAPI void SetMallocCallBack(RlMallocCallback cb);
+    RLAPI void SetReallocCallBack(RlReallocCallback cb);
+    RLAPI void SetFreeCallBack(RlFreeCallback cb);
+
+    RlMallocCallback GetRlMallocCallback();
+    RlMallocCallback GetRlCallocCallback(size_t sz);
+    RlReallocCallback GetRlReallocCallback();
+    RlFreeCallback GetRlFreeCallback();
 #if defined(__cplusplus)
-}
+}            
 #endif
 
 // Allow custom memory allocators
 // NOTE: Require recompiling raylib sources
 #ifndef RL_MALLOC
-    #define RL_MALLOC(sz)       GetRLMalloc()(sz)
+    #define RL_MALLOC(sz)       GetRlMallocCallback()(sz)
 #endif
 #ifndef RL_CALLOC
-    #define RL_CALLOC(n,sz)     GetRLCalloc()(n,sz)
+    #define RL_CALLOC(n,sz)     GetRlMallocCallback(n * sz)(n * sz)
 #endif
 #ifndef RL_REALLOC
-    #define RL_REALLOC(ptr,sz)  GetRLRealloc()(ptr,sz)
+    #define RL_REALLOC(ptr,sz)  GetRlReallocCallback()(ptr, sz)
 #endif
 #ifndef RL_FREE
-    #define RL_FREE(ptr)        GetRLFree()(ptr)
+    #define RL_FREE(ptr)        GetRlFreeCallback()(ptr)
 #endif
 
 // NOTE: MSVC C++ compiler does not support compound literals (C99 feature)
@@ -1074,6 +1070,7 @@ RLAPI void SetTargetFPS(int fps);                                 // Set target 
 RLAPI int GetFPS(void);                                           // Get current FPS
 RLAPI float GetFrameTime(void);                                   // Get time in seconds for last frame drawn (delta time)
 RLAPI double GetTime(void);                                       // Get elapsed time in seconds since InitWindow()
+RLAPI double GetDrawTime(void);                                   // Get elapsed time in seconds between BeginDraw and EndDraw
 
 // Misc. functions
 RLAPI int GetRandomValue(int min, int max);                       // Get a random value between min and max (both included)

@@ -3048,6 +3048,12 @@ double GetTime(void)
     return time;
 }
 
+// Edit(bscal):
+double GetDrawTime(void)
+{
+    return CORE.Time.update;
+}
+
 // Setup window configuration flags (view FLAGS)
 // NOTE: This function is expected to be called before window creation,
 // because it sets up some flags for the window creation process.

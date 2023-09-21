@@ -67,6 +67,10 @@ static SaveFileDataCallback saveFileData = NULL;    // SaveFileText callback fun
 static LoadFileTextCallback loadFileText = NULL;    // LoadFileText callback function pointer
 static SaveFileTextCallback saveFileText = NULL;    // SaveFileText callback function pointer
 
+static RlMallocCallback MallocCallback = malloc;
+static RlReallocCallback ReallocCallback = realloc;
+static RlFreeCallback FreeCallback = free;
+
 //----------------------------------------------------------------------------------
 // Functions to set internal callbacks
 //----------------------------------------------------------------------------------
@@ -76,6 +80,14 @@ void SetSaveFileDataCallback(SaveFileDataCallback callback) { saveFileData = cal
 void SetLoadFileTextCallback(LoadFileTextCallback callback) { loadFileText = callback; }  // Set custom file text loader
 void SetSaveFileTextCallback(SaveFileTextCallback callback) { saveFileText = callback; }  // Set custom file text saver
 
+void SetMallocCallBack(RlMallocCallback cb) { MallocCallback = cb; }
+void SetReallocCallBack(RlReallocCallback cb) { ReallocCallback = cb; }
+void SetFreeCallBack(RlFreeCallback cb) { FreeCallback = cb; }
+
+RlMallocCallback GetRlMallocCallback() { return MallocCallback; }
+RlMallocCallback GetRlCallocCallback(size_t sz) { void* ptr = MallocCallback; memset(ptr, 0, sz); return ptr; }
+RlReallocCallback GetRlReallocCallback() { return ReallocCallback; }
+RlFreeCallback GetRlFreeCallback() { return FreeCallback; }
 
 #if defined(PLATFORM_ANDROID)
 static AAssetManager *assetManager = NULL;          // Android assets manager pointer
@@ -488,19 +500,3 @@ static int android_close(void *cookie)
     return 0;
 }
 #endif  // PLATFORM_ANDROID
-
-// Hooks for Raylib.h RL allocations
-static RLMalloc RLMallocHook = malloc;
-static RLCalloc RLCallocHook = calloc;
-static RLRealloc RLReallocHook = realloc;
-static RLFree RLFreeHook = free;
-
-void SetRLMalloc(RLMalloc hook) { RLMallocHook = hook; }
-void SetRLCalloc(RLCalloc hook) { RLCallocHook = hook; }
-void SetRLRealloc(RLRealloc hook) { RLReallocHook = hook; }
-void SetRLFree(RLFree hook) { RLFreeHook = hook; }
-
-RLMalloc GetRLMalloc() { return RLMallocHook; }
-RLCalloc GetRLCalloc() { return RLCallocHook; }
-RLRealloc GetRLRealloc() { return RLReallocHook; }
-RLFree GetRLFree() { return RLFreeHook; }
