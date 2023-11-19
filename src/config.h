@@ -55,9 +55,7 @@
 // Use busy wait loop for timing sync, if not defined, a high-resolution timer is set up and used
 //#define SUPPORT_BUSY_WAIT_LOOP          1
 // Use a partial-busy wait loop, in this case frame sleeps for most of the time, but then runs a busy loop at the end for accuracy
-#define SUPPORT_PARTIALBUSY_WAIT_LOOP
-// Wait for events passively (sleeping while no events) instead of polling them actively every frame
-//#define SUPPORT_EVENTS_WAITING          1
+#define SUPPORT_PARTIALBUSY_WAIT_LOOP    1
 // Allow automatic screen capture of current screen pressing F12, defined in KeyCallback()
 #define SUPPORT_SCREEN_CAPTURE          1
 // Allow automatic gif recording of current screen pressing CTRL+F12, defined in KeyCallback()
@@ -65,7 +63,7 @@
 // Support CompressData() and DecompressData() functions
 #define SUPPORT_COMPRESSION_API         1
 // Support automatic generated events, loading and recording of those events when required
-//#define SUPPORT_EVENTS_AUTOMATION       1
+#define SUPPORT_AUTOMATION_EVENTS       1
 // Support custom frame control, only for advance users
 // By default EndDrawing() does this job: draws everything + SwapScreenBuffer() + manage frame timing + PollInputEvents()
 // Enabling this flag allows manual control of the frame processes, use at your own risk
@@ -87,6 +85,7 @@
 
 #define MAX_DECOMPRESSION_SIZE         64       // Max size allocated for decompression in MB
 
+#define MAX_AUTOMATION_EVENTS       16384       // Maximum number of automation events to record
 
 //------------------------------------------------------------------------------------
 // Module: rlgl - Configuration values
@@ -137,26 +136,30 @@
 // Some lines-based shapes could still use lines
 #define SUPPORT_QUADS_DRAW_MODE         1
 
+// rshapes: Configuration values
+//------------------------------------------------------------------------------------
+#define SPLINE_SEGMENT_DIVISIONS       24       // Spline segments subdivisions
+
 
 //------------------------------------------------------------------------------------
 // Module: rtextures - Configuration Flags
 //------------------------------------------------------------------------------------
-// Select the desired fileformats to be supported for image data loading
-#define SUPPORT_FILEFORMAT_PNG          1
-#define SUPPORT_FILEFORMAT_BMP          1
-#define SUPPORT_FILEFORMAT_TGA          1
-//#define SUPPORT_FILEFORMAT_JPG          1
-#define SUPPORT_FILEFORMAT_GIF          1
-#define SUPPORT_FILEFORMAT_QOI          1
-//#define SUPPORT_FILEFORMAT_PSD          1
-#define SUPPORT_FILEFORMAT_DDS          1
-#define SUPPORT_FILEFORMAT_HDR          1
+// Selecte desired fileformats to be supported for image data loading
+#define SUPPORT_FILEFORMAT_PNG      1
+//#define SUPPORT_FILEFORMAT_BMP      1
+//#define SUPPORT_FILEFORMAT_TGA      1
+//#define SUPPORT_FILEFORMAT_JPG      1
+#define SUPPORT_FILEFORMAT_GIF      1
+#define SUPPORT_FILEFORMAT_QOI      1
+//#define SUPPORT_FILEFORMAT_PSD      1
+#define SUPPORT_FILEFORMAT_DDS      1
+//#define SUPPORT_FILEFORMAT_HDR      1
 //#define SUPPORT_FILEFORMAT_PIC          1
-//#define SUPPORT_FILEFORMAT_PNM          1
-//#define SUPPORT_FILEFORMAT_KTX          1
-//#define SUPPORT_FILEFORMAT_ASTC         1
-//#define SUPPORT_FILEFORMAT_PKM          1
-//#define SUPPORT_FILEFORMAT_PVR          1
+//#define SUPPORT_FILEFORMAT_KTX      1
+//#define SUPPORT_FILEFORMAT_ASTC     1
+//#define SUPPORT_FILEFORMAT_PKM      1
+//#define SUPPORT_FILEFORMAT_PVR      1
+//#define SUPPORT_FILEFORMAT_SVG      1
 
 // Support image export functionality (.png, .bmp, .tga, .jpg, .qoi)
 #define SUPPORT_IMAGE_EXPORT            1
