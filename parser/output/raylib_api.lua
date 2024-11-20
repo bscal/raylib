@@ -63,25 +63,25 @@ return {
     {
       name = "RL_MALLOC(sz)",
       type = "MACRO",
-      value = "malloc(sz)",
+      value = "GetRlMallocCallback()(sz)",
       description = ""
     },
     {
       name = "RL_CALLOC(n,sz)",
       type = "MACRO",
-      value = "calloc(n,sz)",
+      value = "GetRlMallocCallback(n * sz)(n * sz)",
       description = ""
     },
     {
       name = "RL_REALLOC(ptr,sz)",
       type = "MACRO",
-      value = "realloc(ptr,sz)",
+      value = "GetRlReallocCallback()(ptr, sz)",
       description = ""
     },
     {
       name = "RL_FREE(ptr)",
       type = "MACRO",
-      value = "free(ptr)",
+      value = "GetRlFreeCallback()(ptr)",
       description = ""
     },
     {
@@ -3041,6 +3041,31 @@ return {
   },
   callbacks = {
     {
+      name = "RlMallocCallback",
+      description = "",
+      returnType = "void*",
+      params = {
+        {type = "size_t", name = "sz"}
+      }
+    },
+    {
+      name = "RlReallocCallback",
+      description = "",
+      returnType = "void*",
+      params = {
+        {type = "void*", name = "ptr"},
+        {type = "size_t", name = "sz"}
+      }
+    },
+    {
+      name = "RlFreeCallback",
+      description = "",
+      returnType = "void",
+      params = {
+        {type = "void*", name = "ptr"}
+      }
+    },
+    {
       name = "TraceLogCallback",
       description = "Logging: Redirect trace log messages",
       returnType = "void",
@@ -3097,6 +3122,30 @@ return {
     }
   },
   functions = {
+    {
+      name = "SetMallocCallBack",
+      description = "",
+      returnType = "void",
+      params = {
+        {type = "RlMallocCallback", name = "cb"}
+      }
+    },
+    {
+      name = "SetReallocCallBack",
+      description = "",
+      returnType = "void",
+      params = {
+        {type = "RlReallocCallback", name = "cb"}
+      }
+    },
+    {
+      name = "SetFreeCallBack",
+      description = "",
+      returnType = "void",
+      params = {
+        {type = "RlFreeCallback", name = "cb"}
+      }
+    },
     {
       name = "InitWindow",
       description = "Initialize window and OpenGL context",
@@ -3761,6 +3810,11 @@ return {
       name = "GetFPS",
       description = "Get current FPS",
       returnType = "int"
+    },
+    {
+      name = "GetDrawTime",
+      description = "Get elapsed time in seconds between BeginDraw and EndDraw",
+      returnType = "double"
     },
     {
       name = "SwapScreenBuffer",

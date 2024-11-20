@@ -11,10 +11,10 @@
         <Define name="PI" type="FLOAT" value="3.14159265358979323846" desc="" />
         <Define name="DEG2RAD" type="FLOAT_MATH" value="(PI/180.0f)" desc="" />
         <Define name="RAD2DEG" type="FLOAT_MATH" value="(180.0f/PI)" desc="" />
-        <Define name="RL_MALLOC(sz)" type="MACRO" value="malloc(sz)" desc="" />
-        <Define name="RL_CALLOC(n,sz)" type="MACRO" value="calloc(n,sz)" desc="" />
-        <Define name="RL_REALLOC(ptr,sz)" type="MACRO" value="realloc(ptr,sz)" desc="" />
-        <Define name="RL_FREE(ptr)" type="MACRO" value="free(ptr)" desc="" />
+        <Define name="RL_MALLOC(sz)" type="MACRO" value="GetRlMallocCallback()(sz)" desc="" />
+        <Define name="RL_CALLOC(n,sz)" type="MACRO" value="GetRlMallocCallback(n * sz)(n * sz)" desc="" />
+        <Define name="RL_REALLOC(ptr,sz)" type="MACRO" value="GetRlReallocCallback()(ptr, sz)" desc="" />
+        <Define name="RL_FREE(ptr)" type="MACRO" value="GetRlFreeCallback()(ptr)" desc="" />
         <Define name="CLITERAL(type)" type="MACRO" value="type" desc="" />
         <Define name="RL_COLOR_TYPE" type="GUARD" value="" desc="" />
         <Define name="RL_RECTANGLE_TYPE" type="GUARD" value="" desc="" />
@@ -647,7 +647,17 @@
             <Value name="NPATCH_THREE_PATCH_HORIZONTAL" integer="2" desc="Npatch layout: 3x1 tiles" />
         </Enum>
     </Enums>
-    <Callbacks count="6">
+    <Callbacks count="9">
+        <Callback name="RlMallocCallback" retType="void*" paramCount="1" desc="">
+            <Param type="size_t" name="sz" desc="" />
+        </Callback>
+        <Callback name="RlReallocCallback" retType="void*" paramCount="2" desc="">
+            <Param type="void*" name="ptr" desc="" />
+            <Param type="size_t" name="sz" desc="" />
+        </Callback>
+        <Callback name="RlFreeCallback" retType="void" paramCount="1" desc="">
+            <Param type="void*" name="ptr" desc="" />
+        </Callback>
         <Callback name="TraceLogCallback" retType="void" paramCount="3" desc="Logging: Redirect trace log messages">
             <Param type="int" name="logLevel" desc="" />
             <Param type="const char *" name="text" desc="" />
@@ -674,7 +684,16 @@
             <Param type="unsigned int" name="frames" desc="" />
         </Callback>
     </Callbacks>
-    <Functions count="581">
+    <Functions count="585">
+        <Function name="SetMallocCallBack" retType="void" paramCount="1" desc="">
+            <Param type="RlMallocCallback" name="cb" desc="" />
+        </Function>
+        <Function name="SetReallocCallBack" retType="void" paramCount="1" desc="">
+            <Param type="RlReallocCallback" name="cb" desc="" />
+        </Function>
+        <Function name="SetFreeCallBack" retType="void" paramCount="1" desc="">
+            <Param type="RlFreeCallback" name="cb" desc="" />
+        </Function>
         <Function name="InitWindow" retType="void" paramCount="3" desc="Initialize window and OpenGL context">
             <Param type="int" name="width" desc="" />
             <Param type="int" name="height" desc="" />
@@ -951,6 +970,8 @@
         <Function name="GetTime" retType="double" paramCount="0" desc="Get elapsed time in seconds since InitWindow()">
         </Function>
         <Function name="GetFPS" retType="int" paramCount="0" desc="Get current FPS">
+        </Function>
+        <Function name="GetDrawTime" retType="double" paramCount="0" desc="Get elapsed time in seconds between BeginDraw and EndDraw">
         </Function>
         <Function name="SwapScreenBuffer" retType="void" paramCount="0" desc="Swap back buffer with front buffer (screen drawing)">
         </Function>
