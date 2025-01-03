@@ -50,8 +50,8 @@
     #define RGFW_OPENGL_ES2
 #endif
 
-void ShowCursor(void);
-void CloseWindow(void);
+void Raylib_ShowCursor(void);
+void Raylib_CloseWindow(void);
 
 #if defined(__linux__)
     #define _INPUT_EVENT_CODES_H
@@ -236,7 +236,7 @@ bool InitGraphicsDevice(void);   // Initialize graphics device
 //----------------------------------------------------------------------------------
 
 // Check if application should close
-bool WindowShouldClose(void)
+bool Raylib_WindowShouldClose(void)
 {
     if (CORE.Window.shouldClose == false)
         CORE.Window.shouldClose = RGFW_window_shouldClose(platform.window);
@@ -654,7 +654,7 @@ Vector2 GetWindowScaleDPI(void)
 // Set clipboard text content
 void SetClipboardText(const char *text)
 {
-    RGFW_writeClipboard(text, strlen(text));
+    RGFW_writeClipboard(text, (u32)strlen(text));
 }
 
 // Get clipboard text content
@@ -699,14 +699,14 @@ Image GetClipboardImage(void)
 }
 
 // Show mouse cursor
-void ShowCursor(void)
+void Raylib_ShowCursor(void)
 {
     RGFW_window_showMouse(platform.window, true);
     CORE.Input.Mouse.cursorHidden = false;
 }
 
 // Hides mouse cursor
-void HideCursor(void)
+void Raylib_HideCursor(void)
 {
     RGFW_window_showMouse(platform.window, false);
     CORE.Input.Mouse.cursorHidden = true;
@@ -731,7 +731,7 @@ void DisableCursor(void)
 
     RGFW_window_mouseHold(platform.window, RGFW_AREA(0, 0));
 
-    HideCursor();
+    Raylib_HideCursor();
 }
 
 // Swap back buffer with front buffer (screen drawing)
@@ -947,7 +947,7 @@ void PollInputEvents(void)
             case RGFW_quit: CORE.Window.shouldClose = true; break;
             case RGFW_dnd:      // Dropped file
             {
-                for (int i = 0; i < event->droppedFilesCount; i++)
+                for (int i = 0; i < (int)event->droppedFilesCount; i++)
                 {
                     if (CORE.Window.dropFileCount == 0)
                     {

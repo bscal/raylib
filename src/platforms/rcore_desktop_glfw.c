@@ -49,6 +49,8 @@
 *
 **********************************************************************************************/
 
+#define APIENTRY __stdcall
+
 #define GLFW_INCLUDE_NONE       // Disable the standard OpenGL header inclusion on GLFW3
                                 // NOTE: Already provided by rlgl implementation (on glad.h)
 #include "GLFW/glfw3.h"         // GLFW3 library: Windows, OpenGL context and Input management
@@ -58,6 +60,7 @@
 #if defined(_WIN32)
     typedef void *PVOID;
     typedef PVOID HANDLE;
+    #undef APIENTRY
     #include "../external/win32_clipboard.h"
     typedef HANDLE HWND;
     #define GLFW_EXPOSE_NATIVE_WIN32
@@ -138,7 +141,7 @@ static void JoystickCallback(int jid, int event);                               
 
 // Check if application should close
 // NOTE: By default, if KEY_ESCAPE pressed or window close icon clicked
-bool WindowShouldClose(void)
+bool Raylib_WindowShouldClose(void)
 {
     if (CORE.Window.ready) return CORE.Window.shouldClose;
     else return true;

@@ -119,7 +119,7 @@ typedef struct {
     char currentButtonStateEvdev[MAX_MOUSE_BUTTONS]; // Holds the new mouse state for the next polling event to grab
     bool cursorRelative;                // Relative cursor mode
     int mouseFd;                        // File descriptor for the evdev mouse/touch/gestures
-    Rectangle absRange;                 // Range of values for absolute pointing devices (touchscreens)
+    Raylib_Rectangle absRange;                 // Range of values for absolute pointing devices (touchscreens)
     int touchSlot;                      // Hold the touch slot number of the currently being sent multitouch block
 
     // Gamepad data
@@ -247,7 +247,7 @@ static int FindNearestConnectorMode(const drmModeConnector *connector, uint widt
 
 // Check if application should close
 // NOTE: By default, if KEY_ESCAPE pressed
-bool WindowShouldClose(void)
+bool Raylib_WindowShouldClose(void)
 {
     if (CORE.Window.ready) return CORE.Window.shouldClose;
     else return true;
@@ -520,13 +520,13 @@ Image GetClipboardImage(void)
 }
 
 // Show mouse cursor
-void ShowCursor(void)
+void Raylib_ShowCursor(void)
 {
     CORE.Input.Mouse.cursorHidden = false;
 }
 
 // Hides mouse cursor
-void HideCursor(void)
+void Raylib_HideCursor(void)
 {
     CORE.Input.Mouse.cursorHidden = true;
 }

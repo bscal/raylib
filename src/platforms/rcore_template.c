@@ -84,7 +84,7 @@ bool InitGraphicsDevice(void);   // Initialize graphics device
 //----------------------------------------------------------------------------------
 
 // Check if application should close
-bool WindowShouldClose(void)
+bool Raylib_WindowShouldClose(void)
 {
     if (CORE.Window.ready) return CORE.Window.shouldClose;
     else return true;
@@ -303,13 +303,13 @@ Image GetClipboardImage(void)
 }
 
 // Show mouse cursor
-void ShowCursor(void)
+void Raylib_ShowCursor(void)
 {
     CORE.Input.Mouse.cursorHidden = false;
 }
 
 // Hides mouse cursor
-void HideCursor(void)
+void Raylib_HideCursor(void)
 {
     CORE.Input.Mouse.cursorHidden = true;
 }

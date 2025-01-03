@@ -307,7 +307,7 @@ struct android_app *GetAndroidApp(void)
 //----------------------------------------------------------------------------------
 
 // Check if application should close
-bool WindowShouldClose(void)
+bool Raylib_WindowShouldClose(void)
 {
     if (CORE.Window.ready) return CORE.Window.shouldClose;
     else return true;
@@ -526,13 +526,13 @@ Image GetClipboardImage(void)
 }
 
 // Show mouse cursor
-void ShowCursor(void)
+void Raylib_ShowCursor(void)
 {
     CORE.Input.Mouse.cursorHidden = false;
 }
 
 // Hides mouse cursor
-void HideCursor(void)
+void Raylib_HideCursor(void)
 {
     CORE.Input.Mouse.cursorHidden = true;
 }
@@ -1014,16 +1014,16 @@ static void AndroidCommandCallback(struct android_app *app, int32_t cmd)
                     #if defined(SUPPORT_MODULE_RSHAPES)
                     // Set font white rectangle for shapes drawing, so shapes and text can be batched together
                     // WARNING: rshapes module is required, if not available, default internal white rectangle is used
-                    Rectangle rec = GetFontDefault().recs[95];
+                    Raylib_Rectangle rec = GetFontDefault().recs[95];
                     if (CORE.Window.flags & FLAG_MSAA_4X_HINT)
                     {
                         // NOTE: We try to maxime rec padding to avoid pixel bleeding on MSAA filtering
-                        SetShapesTexture(GetFontDefault().texture, (Rectangle){ rec.x + 2, rec.y + 2, 1, 1 });
+                        SetShapesTexture(GetFontDefault().texture, (Raylib_Rectangle){ rec.x + 2, rec.y + 2, 1, 1 });
                     }
                     else
                     {
                         // NOTE: We set up a 1px padding on char rectangle to avoid pixel bleeding
-                        SetShapesTexture(GetFontDefault().texture, (Rectangle){ rec.x + 1, rec.y + 1, rec.width - 2, rec.height - 2 });
+                        SetShapesTexture(GetFontDefault().texture, (Raylib_Rectangle){ rec.x + 1, rec.y + 1, rec.width - 2, rec.height - 2 });
                     }
                     #endif
                 #else
@@ -1031,7 +1031,7 @@ static void AndroidCommandCallback(struct android_app *app, int32_t cmd)
                     // Set default texture and rectangle to be used for shapes drawing
                     // NOTE: rlgl default texture is a 1x1 pixel UNCOMPRESSED_R8G8B8A8
                     Texture2D texture = { rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
-                    SetShapesTexture(texture, (Rectangle){ 0.0f, 0.0f, 1.0f, 1.0f });    // WARNING: Module required: rshapes
+                    SetShapesTexture(texture, (Raylib_Rectangle){ 0.0f, 0.0f, 1.0f, 1.0f });    // WARNING: Module required: rshapes
                     #endif
                 #endif
 

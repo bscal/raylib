@@ -67,10 +67,6 @@ static SaveFileDataCallback saveFileData = NULL;    // SaveFileText callback fun
 static LoadFileTextCallback loadFileText = NULL;    // LoadFileText callback function pointer
 static SaveFileTextCallback saveFileText = NULL;    // SaveFileText callback function pointer
 
-static RlMallocCallback MallocCallback = malloc;
-static RlReallocCallback ReallocCallback = realloc;
-static RlFreeCallback FreeCallback = free;
-
 //----------------------------------------------------------------------------------
 // Functions to set internal callbacks
 //----------------------------------------------------------------------------------

@@ -3774,13 +3774,13 @@ void DrawModelPointsEx(Model model, Vector3 position, Vector3 rotationAxis, floa
 // Draw a billboard
 void DrawBillboard(Camera camera, Texture2D texture, Vector3 position, float scale, Color tint)
 {
-    Rectangle source = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
+    Raylib_Rectangle source = { 0.0f, 0.0f, (float)texture.width, (float)texture.height };
 
     DrawBillboardRec(camera, texture, source, position, (Vector2) { scale*fabsf((float)source.width/source.height), scale }, tint);
 }
 
 // Draw a billboard (part of a texture defined by a rectangle)
-void DrawBillboardRec(Camera camera, Texture2D texture, Rectangle source, Vector3 position, Vector2 size, Color tint)
+void DrawBillboardRec(Camera camera, Texture2D texture, Raylib_Rectangle source, Vector3 position, Vector2 size, Color tint)
 {
     // NOTE: Billboard locked on axis-Y
     Vector3 up = { 0.0f, 1.0f, 0.0f };
@@ -3789,7 +3789,7 @@ void DrawBillboardRec(Camera camera, Texture2D texture, Rectangle source, Vector
 }
 
 // Draw a billboard with additional parameters
-void DrawBillboardPro(Camera camera, Texture2D texture, Rectangle source, Vector3 position, Vector3 up, Vector2 size, Vector2 origin, float rotation, Color tint)
+void DrawBillboardPro(Camera camera, Texture2D texture, Raylib_Rectangle source, Vector3 position, Vector3 up, Vector2 size, Vector2 origin, float rotation, Color tint)
 {
     // Compute the up vector and the right vector
     Matrix matView = MatrixLookAt(camera.position, camera.target, camera.up);
@@ -5107,7 +5107,7 @@ static Image LoadImageFromCgltfImage(cgltf_image *cgltfImage, const char *texPat
         }
         else     // Check if image is provided as image path
         {
-            image = LoadImage(TextFormat("%s/%s", texPath, cgltfImage->uri));
+            image = Raylib_LoadImage(TextFormat("%s/%s", texPath, cgltfImage->uri));
         }
     }
     else if (cgltfImage->buffer_view->buffer->data != NULL)    // Check if image is provided as data buffer
@@ -6414,7 +6414,7 @@ static Model LoadM3D(const char *fileName)
         for (i = l = 0, k = -1; i < (int)m3d->numface; i++, l++)
         {
             // Materials are grouped together
-            if (mi != m3d->face[i].materialid)
+            if (mi != (int)m3d->face[i].materialid)
             {
                 // there should be only one material switch per material kind, but be bulletproof for non-optimal model files
                 if (k + 1 >= model.meshCount)
@@ -6430,7 +6430,7 @@ static Model LoadM3D(const char *fileName)
 
                 // Only allocate colors VertexBuffer if there's a color vertex in the model for this material batch
                 // if all colors are fully transparent black for all verteces of this materal, then we assume no vertex colors
-                for (j = i, l = vcolor = 0; (j < (int)m3d->numface) && (mi == m3d->face[j].materialid); j++, l++)
+                for (j = i, l = vcolor = 0; (j < (int)m3d->numface) && (mi == (int)m3d->face[j].materialid); j++, l++)
                 {
                     if (!m3d->vertex[m3d->face[j].vertex[0]].color ||
                         !m3d->vertex[m3d->face[j].vertex[1]].color ||

@@ -433,7 +433,7 @@ static KeyboardKey ConvertScancodeToKey(SDL_Scancode sdlScancode);  // Help conv
 //----------------------------------------------------------------------------------
 
 // Check if application should close
-bool WindowShouldClose(void)
+bool Raylib_WindowShouldClose(void)
 {
     if (CORE.Window.ready) return CORE.Window.shouldClose;
     else return true;
@@ -1148,7 +1148,7 @@ Image GetClipboardImage(void)
 }
 
 // Show mouse cursor
-void ShowCursor(void)
+void Raylib_ShowCursor(void)
 {
 #if defined(PLATFORM_DESKTOP_SDL3)
     SDL_ShowCursor();
@@ -1159,7 +1159,7 @@ void ShowCursor(void)
 }
 
 // Hides mouse cursor
-void HideCursor(void)
+void Raylib_HideCursor(void)
 {
 #if defined(PLATFORM_DESKTOP_SDL3)
     SDL_HideCursor();

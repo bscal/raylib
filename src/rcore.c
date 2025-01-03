@@ -155,9 +155,7 @@
 
 // Platform specific defines to handle GetApplicationDirectory()
 #if (defined(_WIN32) && !defined(PLATFORM_DESKTOP_RGFW)) || (defined(_MSC_VER) && defined(PLATFORM_DESKTOP_RGFW))
-    #ifndef MAX_PATH
-        #define MAX_PATH 1025
-    #endif
+
 __declspec(dllimport) unsigned long __stdcall GetModuleFileNameA(void *hModule, void *lpFilename, unsigned long nSize);
 __declspec(dllimport) unsigned long __stdcall GetModuleFileNameW(void *hModule, void *lpFilename, unsigned long nSize);
 __declspec(dllimport) int __stdcall WideCharToMultiByte(unsigned int cp, unsigned long flags, void *widestr, int cchwide, void *str, int cbmb, void *defchar, int *used_default);
@@ -558,7 +556,7 @@ const char *TextFormat(const char *text, ...);              // Formatting of tex
 //----------------------------------------------------------------------------------
 
 // NOTE: Functions with a platform-specific implementation on rcore_<platform>.c
-//bool WindowShouldClose(void)
+//bool Raylib_WindowShouldClose(void)
 //void ToggleFullscreen(void)
 //void ToggleBorderlessWindowed(void)
 //void MaximizeWindow(void)
@@ -595,13 +593,13 @@ const char *TextFormat(const char *text, ...);              // Formatting of tex
 //void SetClipboardText(const char *text)
 //const char *GetClipboardText(void)
 
-//void ShowCursor(void)
-//void HideCursor(void)
+//void Raylib_ShowCursor(void)
+//void Raylib_HideCursor(void)
 //void EnableCursor(void)
 //void DisableCursor(void)
 
 // Initialize window and OpenGL context
-void InitWindow(int width, int height, const char *title)
+void Raylib_InitWindow(int width, int height, const char *title)
 {
     TRACELOG(LOG_INFO, "Initializing raylib %s", RAYLIB_VERSION);
 
@@ -687,16 +685,16 @@ void InitWindow(int width, int height, const char *title)
         #if defined(SUPPORT_MODULE_RSHAPES)
         // Set font white rectangle for shapes drawing, so shapes and text can be batched together
         // WARNING: rshapes module is required, if not available, default internal white rectangle is used
-        Rectangle rec = GetFontDefault().recs[95];
+        Raylib_Rectangle rec = GetFontDefault().recs[95];
         if (CORE.Window.flags & FLAG_MSAA_4X_HINT)
         {
             // NOTE: We try to maxime rec padding to avoid pixel bleeding on MSAA filtering
-            SetShapesTexture(GetFontDefault().texture, (Rectangle){ rec.x + 2, rec.y + 2, 1, 1 });
+            SetShapesTexture(GetFontDefault().texture, (Raylib_Rectangle){ rec.x + 2, rec.y + 2, 1, 1 });
         }
         else
         {
             // NOTE: We set up a 1px padding on char rectangle to avoid pixel bleeding
-            SetShapesTexture(GetFontDefault().texture, (Rectangle){ rec.x + 1, rec.y + 1, rec.width - 2, rec.height - 2 });
+            SetShapesTexture(GetFontDefault().texture, (Raylib_Rectangle){ rec.x + 1, rec.y + 1, rec.width - 2, rec.height - 2 });
         }
         #endif
     #endif
@@ -705,7 +703,7 @@ void InitWindow(int width, int height, const char *title)
     // Set default texture and rectangle to be used for shapes drawing
     // NOTE: rlgl default texture is a 1x1 pixel UNCOMPRESSED_R8G8B8A8
     Texture2D texture = { rlGetTextureIdDefault(), 1, 1, 1, PIXELFORMAT_UNCOMPRESSED_R8G8B8A8 };
-    SetShapesTexture(texture, (Rectangle){ 0.0f, 0.0f, 1.0f, 1.0f });    // WARNING: Module required: rshapes
+    SetShapesTexture(texture, (Raylib_Rectangle){ 0.0f, 0.0f, 1.0f, 1.0f });    // WARNING: Module required: rshapes
     #endif
 #endif
 
@@ -719,7 +717,7 @@ void InitWindow(int width, int height, const char *title)
 }
 
 // Close window and unload OpenGL context
-void CloseWindow(void)
+void Raylib_CloseWindow(void)
 {
 #if defined(SUPPORT_GIF_RECORDING)
     if (gifRecording)
@@ -921,7 +919,7 @@ void EndDrawing(void)
         if ((int)(GetTime()/0.5)%2 == 1)
         {
             DrawCircle(30, CORE.Window.screen.height - 20, 10, MAROON);                 // WARNING: Module required: rshapes
-            DrawText("GIF RECORDING", 50, CORE.Window.screen.height - 25, 10, RED);     // WARNING: Module required: rtext
+            Raylib_DrawText("GIF RECORDING", 50, CORE.Window.screen.height - 25, 10, RED);     // WARNING: Module required: rtext
         }
     #endif
 

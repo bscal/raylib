@@ -151,7 +151,7 @@ static EM_BOOL EmscriptenGamepadCallback(int eventType, const EmscriptenGamepadE
 //----------------------------------------------------------------------------------
 
 // Check if application should close
-bool WindowShouldClose(void)
+bool Raylib_WindowShouldClose(void)
 {
     // Emterpreter-Async required to run sync code
     // https://github.com/emscripten-core/emscripten/wiki/Emterpreter#emterpreter-async-run-synchronous-code
@@ -816,7 +816,7 @@ Image GetClipboardImage(void)
 }
 
 // Show mouse cursor
-void ShowCursor(void)
+void Raylib_ShowCursor(void)
 {
     if (CORE.Input.Mouse.cursorHidden)
     {
@@ -827,7 +827,7 @@ void ShowCursor(void)
 }
 
 // Hides mouse cursor
-void HideCursor(void)
+void Raylib_HideCursor(void)
 {
     if (!CORE.Input.Mouse.cursorHidden)
     {
