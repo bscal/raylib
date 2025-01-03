@@ -63,25 +63,25 @@ return {
     {
       name = "RL_MALLOC(sz)",
       type = "MACRO",
-      value = "GetRlMallocCallback()(sz)",
+      value = "_aligned_malloc(sz, 16)",
       description = ""
     },
     {
       name = "RL_CALLOC(n,sz)",
       type = "MACRO",
-      value = "GetRlMallocCallback(n * sz)(n * sz)",
+      value = "_aligned_recalloc(NULL, n, sz, 16)",
       description = ""
     },
     {
       name = "RL_REALLOC(ptr,sz)",
       type = "MACRO",
-      value = "GetRlReallocCallback()(ptr, sz)",
+      value = "_aligned_realloc(ptr, sz, 16)",
       description = ""
     },
     {
       name = "RL_FREE(ptr)",
       type = "MACRO",
-      value = "GetRlFreeCallback()(ptr)",
+      value = "_aligned_free(ptr)",
       description = ""
     },
     {
@@ -520,28 +520,28 @@ return {
       }
     },
     {
-      name = "Rectangle",
-      description = "Rectangle, 4 components",
+      name = "Raylib_Rectangle",
+      description = "Raylib_Rectangle, 4 components",
       fields = {
         {
           type = "float",
           name = "x",
-          description = "Rectangle top-left corner position x"
+          description = "Raylib_Rectangle top-left corner position x"
         },
         {
           type = "float",
           name = "y",
-          description = "Rectangle top-left corner position y"
+          description = "Raylib_Rectangle top-left corner position y"
         },
         {
           type = "float",
           name = "width",
-          description = "Rectangle width"
+          description = "Raylib_Rectangle width"
         },
         {
           type = "float",
           name = "height",
-          description = "Rectangle height"
+          description = "Raylib_Rectangle height"
         }
       }
     },
@@ -633,7 +633,7 @@ return {
       description = "NPatchInfo, n-patch layout info",
       fields = {
         {
-          type = "Rectangle",
+          type = "Raylib_Rectangle",
           name = "source",
           description = "Texture source rectangle"
         },
@@ -720,7 +720,7 @@ return {
           description = "Texture atlas containing the glyphs"
         },
         {
-          type = "Rectangle *",
+          type = "Raylib_Rectangle *",
           name = "recs",
           description = "Rectangles in texture for the glyphs"
         },
@@ -3041,31 +3041,6 @@ return {
   },
   callbacks = {
     {
-      name = "RlMallocCallback",
-      description = "",
-      returnType = "void*",
-      params = {
-        {type = "size_t", name = "sz"}
-      }
-    },
-    {
-      name = "RlReallocCallback",
-      description = "",
-      returnType = "void*",
-      params = {
-        {type = "void*", name = "ptr"},
-        {type = "size_t", name = "sz"}
-      }
-    },
-    {
-      name = "RlFreeCallback",
-      description = "",
-      returnType = "void",
-      params = {
-        {type = "void*", name = "ptr"}
-      }
-    },
-    {
       name = "TraceLogCallback",
       description = "Logging: Redirect trace log messages",
       returnType = "void",
@@ -3123,31 +3098,7 @@ return {
   },
   functions = {
     {
-      name = "SetMallocCallBack",
-      description = "",
-      returnType = "void",
-      params = {
-        {type = "RlMallocCallback", name = "cb"}
-      }
-    },
-    {
-      name = "SetReallocCallBack",
-      description = "",
-      returnType = "void",
-      params = {
-        {type = "RlReallocCallback", name = "cb"}
-      }
-    },
-    {
-      name = "SetFreeCallBack",
-      description = "",
-      returnType = "void",
-      params = {
-        {type = "RlFreeCallback", name = "cb"}
-      }
-    },
-    {
-      name = "InitWindow",
+      name = "Raylib_InitWindow",
       description = "Initialize window and OpenGL context",
       returnType = "void",
       params = {
@@ -3157,12 +3108,12 @@ return {
       }
     },
     {
-      name = "CloseWindow",
+      name = "Raylib_CloseWindow",
       description = "Close window and unload OpenGL context",
       returnType = "void"
     },
     {
-      name = "WindowShouldClose",
+      name = "Raylib_WindowShouldClose",
       description = "Check if application should close (KEY_ESCAPE pressed or windows close icon clicked)",
       returnType = "bool"
     },
@@ -3462,12 +3413,12 @@ return {
       returnType = "void"
     },
     {
-      name = "ShowCursor",
+      name = "Raylib_ShowCursor",
       description = "Shows cursor",
       returnType = "void"
     },
     {
-      name = "HideCursor",
+      name = "Raylib_HideCursor",
       description = "Hides cursor",
       returnType = "void"
     },
@@ -4681,7 +4632,7 @@ return {
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
-        {type = "Rectangle", name = "source"}
+        {type = "Raylib_Rectangle", name = "source"}
       }
     },
     {
@@ -4692,7 +4643,7 @@ return {
     {
       name = "GetShapesTextureRectangle",
       description = "Get texture source rectangle that is used for shapes drawing",
-      returnType = "Rectangle"
+      returnType = "Raylib_Rectangle"
     },
     {
       name = "DrawPixel",
@@ -4926,7 +4877,7 @@ return {
       description = "Draw a color-filled rectangle",
       returnType = "void",
       params = {
-        {type = "Rectangle", name = "rec"},
+        {type = "Raylib_Rectangle", name = "rec"},
         {type = "Color", name = "color"}
       }
     },
@@ -4935,7 +4886,7 @@ return {
       description = "Draw a color-filled rectangle with pro parameters",
       returnType = "void",
       params = {
-        {type = "Rectangle", name = "rec"},
+        {type = "Raylib_Rectangle", name = "rec"},
         {type = "Vector2", name = "origin"},
         {type = "float", name = "rotation"},
         {type = "Color", name = "color"}
@@ -4972,7 +4923,7 @@ return {
       description = "Draw a gradient-filled rectangle with custom vertex colors",
       returnType = "void",
       params = {
-        {type = "Rectangle", name = "rec"},
+        {type = "Raylib_Rectangle", name = "rec"},
         {type = "Color", name = "topLeft"},
         {type = "Color", name = "bottomLeft"},
         {type = "Color", name = "topRight"},
@@ -4996,7 +4947,7 @@ return {
       description = "Draw rectangle outline with extended parameters",
       returnType = "void",
       params = {
-        {type = "Rectangle", name = "rec"},
+        {type = "Raylib_Rectangle", name = "rec"},
         {type = "float", name = "lineThick"},
         {type = "Color", name = "color"}
       }
@@ -5006,7 +4957,7 @@ return {
       description = "Draw rectangle with rounded edges",
       returnType = "void",
       params = {
-        {type = "Rectangle", name = "rec"},
+        {type = "Raylib_Rectangle", name = "rec"},
         {type = "float", name = "roundness"},
         {type = "int", name = "segments"},
         {type = "Color", name = "color"}
@@ -5017,7 +4968,7 @@ return {
       description = "Draw rectangle lines with rounded edges",
       returnType = "void",
       params = {
-        {type = "Rectangle", name = "rec"},
+        {type = "Raylib_Rectangle", name = "rec"},
         {type = "float", name = "roundness"},
         {type = "int", name = "segments"},
         {type = "Color", name = "color"}
@@ -5028,7 +4979,7 @@ return {
       description = "Draw rectangle with rounded edges outline",
       returnType = "void",
       params = {
-        {type = "Rectangle", name = "rec"},
+        {type = "Raylib_Rectangle", name = "rec"},
         {type = "float", name = "roundness"},
         {type = "int", name = "segments"},
         {type = "float", name = "lineThick"},
@@ -5293,8 +5244,8 @@ return {
       description = "Check collision between two rectangles",
       returnType = "bool",
       params = {
-        {type = "Rectangle", name = "rec1"},
-        {type = "Rectangle", name = "rec2"}
+        {type = "Raylib_Rectangle", name = "rec1"},
+        {type = "Raylib_Rectangle", name = "rec2"}
       }
     },
     {
@@ -5315,7 +5266,7 @@ return {
       params = {
         {type = "Vector2", name = "center"},
         {type = "float", name = "radius"},
-        {type = "Rectangle", name = "rec"}
+        {type = "Raylib_Rectangle", name = "rec"}
       }
     },
     {
@@ -5335,7 +5286,7 @@ return {
       returnType = "bool",
       params = {
         {type = "Vector2", name = "point"},
-        {type = "Rectangle", name = "rec"}
+        {type = "Raylib_Rectangle", name = "rec"}
       }
     },
     {
@@ -5395,14 +5346,14 @@ return {
     {
       name = "GetCollisionRec",
       description = "Get collision rectangle for two rectangles collision",
-      returnType = "Rectangle",
+      returnType = "Raylib_Rectangle",
       params = {
-        {type = "Rectangle", name = "rec1"},
-        {type = "Rectangle", name = "rec2"}
+        {type = "Raylib_Rectangle", name = "rec1"},
+        {type = "Raylib_Rectangle", name = "rec2"}
       }
     },
     {
-      name = "LoadImage",
+      name = "Raylib_LoadImage",
       description = "Load image from file into CPU memory (RAM)",
       returnType = "Image",
       params = {
@@ -5623,7 +5574,7 @@ return {
       returnType = "Image",
       params = {
         {type = "Image", name = "image"},
-        {type = "Rectangle", name = "rec"}
+        {type = "Raylib_Rectangle", name = "rec"}
       }
     },
     {
@@ -5681,7 +5632,7 @@ return {
       returnType = "void",
       params = {
         {type = "Image *", name = "image"},
-        {type = "Rectangle", name = "crop"}
+        {type = "Raylib_Rectangle", name = "crop"}
       }
     },
     {
@@ -5923,7 +5874,7 @@ return {
     {
       name = "GetImageAlphaBorder",
       description = "Get image alpha border rectangle",
-      returnType = "Rectangle",
+      returnType = "Raylib_Rectangle",
       params = {
         {type = "Image", name = "image"},
         {type = "float", name = "threshold"}
@@ -6081,7 +6032,7 @@ return {
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
-        {type = "Rectangle", name = "rec"},
+        {type = "Raylib_Rectangle", name = "rec"},
         {type = "Color", name = "color"}
       }
     },
@@ -6091,7 +6042,7 @@ return {
       returnType = "void",
       params = {
         {type = "Image *", name = "dst"},
-        {type = "Rectangle", name = "rec"},
+        {type = "Raylib_Rectangle", name = "rec"},
         {type = "int", name = "thick"},
         {type = "Color", name = "color"}
       }
@@ -6163,8 +6114,8 @@ return {
       params = {
         {type = "Image *", name = "dst"},
         {type = "Image", name = "src"},
-        {type = "Rectangle", name = "srcRec"},
-        {type = "Rectangle", name = "dstRec"},
+        {type = "Raylib_Rectangle", name = "srcRec"},
+        {type = "Raylib_Rectangle", name = "dstRec"},
         {type = "Color", name = "tint"}
       }
     },
@@ -6276,7 +6227,7 @@ return {
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
-        {type = "Rectangle", name = "rec"},
+        {type = "Raylib_Rectangle", name = "rec"},
         {type = "const void *", name = "pixels"}
       }
     },
@@ -6345,7 +6296,7 @@ return {
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
-        {type = "Rectangle", name = "source"},
+        {type = "Raylib_Rectangle", name = "source"},
         {type = "Vector2", name = "position"},
         {type = "Color", name = "tint"}
       }
@@ -6356,8 +6307,8 @@ return {
       returnType = "void",
       params = {
         {type = "Texture2D", name = "texture"},
-        {type = "Rectangle", name = "source"},
-        {type = "Rectangle", name = "dest"},
+        {type = "Raylib_Rectangle", name = "source"},
+        {type = "Raylib_Rectangle", name = "dest"},
         {type = "Vector2", name = "origin"},
         {type = "float", name = "rotation"},
         {type = "Color", name = "tint"}
@@ -6370,7 +6321,7 @@ return {
       params = {
         {type = "Texture2D", name = "texture"},
         {type = "NPatchInfo", name = "nPatchInfo"},
-        {type = "Rectangle", name = "dest"},
+        {type = "Raylib_Rectangle", name = "dest"},
         {type = "Vector2", name = "origin"},
         {type = "float", name = "rotation"},
         {type = "Color", name = "tint"}
@@ -6603,7 +6554,7 @@ return {
       returnType = "Image",
       params = {
         {type = "const GlyphInfo *", name = "glyphs"},
-        {type = "Rectangle **", name = "glyphRecs"},
+        {type = "Raylib_Rectangle **", name = "glyphRecs"},
         {type = "int", name = "glyphCount"},
         {type = "int", name = "fontSize"},
         {type = "int", name = "padding"},
@@ -6646,7 +6597,7 @@ return {
       }
     },
     {
-      name = "DrawText",
+      name = "Raylib_DrawText",
       description = "Draw text (using default font)",
       returnType = "void",
       params = {
@@ -6658,7 +6609,7 @@ return {
       }
     },
     {
-      name = "DrawTextEx",
+      name = "Raylib_DrawTextEx",
       description = "Draw text using font and additional parameters",
       returnType = "void",
       params = {
@@ -6760,7 +6711,7 @@ return {
     {
       name = "GetGlyphAtlasRec",
       description = "Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found",
-      returnType = "Rectangle",
+      returnType = "Raylib_Rectangle",
       params = {
         {type = "Font", name = "font"},
         {type = "int", name = "codepoint"}
@@ -7380,7 +7331,7 @@ return {
       params = {
         {type = "Camera", name = "camera"},
         {type = "Texture2D", name = "texture"},
-        {type = "Rectangle", name = "source"},
+        {type = "Raylib_Rectangle", name = "source"},
         {type = "Vector3", name = "position"},
         {type = "Vector2", name = "size"},
         {type = "Color", name = "tint"}
@@ -7393,7 +7344,7 @@ return {
       params = {
         {type = "Camera", name = "camera"},
         {type = "Texture2D", name = "texture"},
-        {type = "Rectangle", name = "source"},
+        {type = "Raylib_Rectangle", name = "source"},
         {type = "Vector3", name = "position"},
         {type = "Vector3", name = "up"},
         {type = "Vector2", name = "size"},
@@ -7922,7 +7873,7 @@ return {
       }
     },
     {
-      name = "PlaySound",
+      name = "Raylib_PlaySound",
       description = "Play a sound",
       returnType = "void",
       params = {

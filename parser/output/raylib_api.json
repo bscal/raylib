@@ -63,25 +63,25 @@
     {
       "name": "RL_MALLOC(sz)",
       "type": "MACRO",
-      "value": "GetRlMallocCallback()(sz)",
+      "value": "_aligned_malloc(sz, 16)",
       "description": ""
     },
     {
       "name": "RL_CALLOC(n,sz)",
       "type": "MACRO",
-      "value": "GetRlMallocCallback(n * sz)(n * sz)",
+      "value": "_aligned_recalloc(NULL, n, sz, 16)",
       "description": ""
     },
     {
       "name": "RL_REALLOC(ptr,sz)",
       "type": "MACRO",
-      "value": "GetRlReallocCallback()(ptr, sz)",
+      "value": "_aligned_realloc(ptr, sz, 16)",
       "description": ""
     },
     {
       "name": "RL_FREE(ptr)",
       "type": "MACRO",
-      "value": "GetRlFreeCallback()(ptr)",
+      "value": "_aligned_free(ptr)",
       "description": ""
     },
     {
@@ -520,28 +520,28 @@
       ]
     },
     {
-      "name": "Rectangle",
-      "description": "Rectangle, 4 components",
+      "name": "Raylib_Rectangle",
+      "description": "Raylib_Rectangle, 4 components",
       "fields": [
         {
           "type": "float",
           "name": "x",
-          "description": "Rectangle top-left corner position x"
+          "description": "Raylib_Rectangle top-left corner position x"
         },
         {
           "type": "float",
           "name": "y",
-          "description": "Rectangle top-left corner position y"
+          "description": "Raylib_Rectangle top-left corner position y"
         },
         {
           "type": "float",
           "name": "width",
-          "description": "Rectangle width"
+          "description": "Raylib_Rectangle width"
         },
         {
           "type": "float",
           "name": "height",
-          "description": "Rectangle height"
+          "description": "Raylib_Rectangle height"
         }
       ]
     },
@@ -633,7 +633,7 @@
       "description": "NPatchInfo, n-patch layout info",
       "fields": [
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "source",
           "description": "Texture source rectangle"
         },
@@ -720,7 +720,7 @@
           "description": "Texture atlas containing the glyphs"
         },
         {
-          "type": "Rectangle *",
+          "type": "Raylib_Rectangle *",
           "name": "recs",
           "description": "Rectangles in texture for the glyphs"
         },
@@ -3041,43 +3041,6 @@
   ],
   "callbacks": [
     {
-      "name": "RlMallocCallback",
-      "description": "",
-      "returnType": "void*",
-      "params": [
-        {
-          "type": "size_t",
-          "name": "sz"
-        }
-      ]
-    },
-    {
-      "name": "RlReallocCallback",
-      "description": "",
-      "returnType": "void*",
-      "params": [
-        {
-          "type": "void*",
-          "name": "ptr"
-        },
-        {
-          "type": "size_t",
-          "name": "sz"
-        }
-      ]
-    },
-    {
-      "name": "RlFreeCallback",
-      "description": "",
-      "returnType": "void",
-      "params": [
-        {
-          "type": "void*",
-          "name": "ptr"
-        }
-      ]
-    },
-    {
       "name": "TraceLogCallback",
       "description": "Logging: Redirect trace log messages",
       "returnType": "void",
@@ -3174,40 +3137,7 @@
   ],
   "functions": [
     {
-      "name": "SetMallocCallBack",
-      "description": "",
-      "returnType": "void",
-      "params": [
-        {
-          "type": "RlMallocCallback",
-          "name": "cb"
-        }
-      ]
-    },
-    {
-      "name": "SetReallocCallBack",
-      "description": "",
-      "returnType": "void",
-      "params": [
-        {
-          "type": "RlReallocCallback",
-          "name": "cb"
-        }
-      ]
-    },
-    {
-      "name": "SetFreeCallBack",
-      "description": "",
-      "returnType": "void",
-      "params": [
-        {
-          "type": "RlFreeCallback",
-          "name": "cb"
-        }
-      ]
-    },
-    {
-      "name": "InitWindow",
+      "name": "Raylib_InitWindow",
       "description": "Initialize window and OpenGL context",
       "returnType": "void",
       "params": [
@@ -3226,12 +3156,12 @@
       ]
     },
     {
-      "name": "CloseWindow",
+      "name": "Raylib_CloseWindow",
       "description": "Close window and unload OpenGL context",
       "returnType": "void"
     },
     {
-      "name": "WindowShouldClose",
+      "name": "Raylib_WindowShouldClose",
       "description": "Check if application should close (KEY_ESCAPE pressed or windows close icon clicked)",
       "returnType": "bool"
     },
@@ -3606,12 +3536,12 @@
       "returnType": "void"
     },
     {
-      "name": "ShowCursor",
+      "name": "Raylib_ShowCursor",
       "description": "Shows cursor",
       "returnType": "void"
     },
     {
-      "name": "HideCursor",
+      "name": "Raylib_HideCursor",
       "description": "Hides cursor",
       "returnType": "void"
     },
@@ -5381,7 +5311,7 @@
           "name": "texture"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "source"
         }
       ]
@@ -5394,7 +5324,7 @@
     {
       "name": "GetShapesTextureRectangle",
       "description": "Get texture source rectangle that is used for shapes drawing",
-      "returnType": "Rectangle"
+      "returnType": "Raylib_Rectangle"
     },
     {
       "name": "DrawPixel",
@@ -5890,7 +5820,7 @@
       "returnType": "void",
       "params": [
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         },
         {
@@ -5905,7 +5835,7 @@
       "returnType": "void",
       "params": [
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         },
         {
@@ -5990,7 +5920,7 @@
       "returnType": "void",
       "params": [
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         },
         {
@@ -6044,7 +5974,7 @@
       "returnType": "void",
       "params": [
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         },
         {
@@ -6063,7 +5993,7 @@
       "returnType": "void",
       "params": [
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         },
         {
@@ -6086,7 +6016,7 @@
       "returnType": "void",
       "params": [
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         },
         {
@@ -6109,7 +6039,7 @@
       "returnType": "void",
       "params": [
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         },
         {
@@ -6686,11 +6616,11 @@
       "returnType": "bool",
       "params": [
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec1"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec2"
         }
       ]
@@ -6732,7 +6662,7 @@
           "name": "radius"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         }
       ]
@@ -6770,7 +6700,7 @@
           "name": "point"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         }
       ]
@@ -6889,20 +6819,20 @@
     {
       "name": "GetCollisionRec",
       "description": "Get collision rectangle for two rectangles collision",
-      "returnType": "Rectangle",
+      "returnType": "Raylib_Rectangle",
       "params": [
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec1"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec2"
         }
       ]
     },
     {
-      "name": "LoadImage",
+      "name": "Raylib_LoadImage",
       "description": "Load image from file into CPU memory (RAM)",
       "returnType": "Image",
       "params": [
@@ -7319,7 +7249,7 @@
           "name": "image"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         }
       ]
@@ -7425,7 +7355,7 @@
           "name": "image"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "crop"
         }
       ]
@@ -7831,7 +7761,7 @@
     {
       "name": "GetImageAlphaBorder",
       "description": "Get image alpha border rectangle",
-      "returnType": "Rectangle",
+      "returnType": "Raylib_Rectangle",
       "params": [
         {
           "type": "Image",
@@ -8164,7 +8094,7 @@
           "name": "dst"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         },
         {
@@ -8183,7 +8113,7 @@
           "name": "dst"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         },
         {
@@ -8345,11 +8275,11 @@
           "name": "src"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "srcRec"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "dstRec"
         },
         {
@@ -8545,7 +8475,7 @@
           "name": "texture"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "rec"
         },
         {
@@ -8674,7 +8604,7 @@
           "name": "texture"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "source"
         },
         {
@@ -8697,11 +8627,11 @@
           "name": "texture"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "source"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "dest"
         },
         {
@@ -8732,7 +8662,7 @@
           "name": "nPatchInfo"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "dest"
         },
         {
@@ -9145,7 +9075,7 @@
           "name": "glyphs"
         },
         {
-          "type": "Rectangle **",
+          "type": "Raylib_Rectangle **",
           "name": "glyphRecs"
         },
         {
@@ -9223,7 +9153,7 @@
       ]
     },
     {
-      "name": "DrawText",
+      "name": "Raylib_DrawText",
       "description": "Draw text (using default font)",
       "returnType": "void",
       "params": [
@@ -9250,7 +9180,7 @@
       ]
     },
     {
-      "name": "DrawTextEx",
+      "name": "Raylib_DrawTextEx",
       "description": "Draw text using font and additional parameters",
       "returnType": "void",
       "params": [
@@ -9463,7 +9393,7 @@
     {
       "name": "GetGlyphAtlasRec",
       "description": "Get glyph rectangle in font atlas for a codepoint (unicode character), fallback to '?' if not found",
-      "returnType": "Rectangle",
+      "returnType": "Raylib_Rectangle",
       "params": [
         {
           "type": "Font",
@@ -10636,7 +10566,7 @@
           "name": "texture"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "source"
         },
         {
@@ -10667,7 +10597,7 @@
           "name": "texture"
         },
         {
-          "type": "Rectangle",
+          "type": "Raylib_Rectangle",
           "name": "source"
         },
         {
@@ -11585,7 +11515,7 @@
       ]
     },
     {
-      "name": "PlaySound",
+      "name": "Raylib_PlaySound",
       "description": "Play a sound",
       "returnType": "void",
       "params": [
